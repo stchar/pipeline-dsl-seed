@@ -1,0 +1,92 @@
+apply plugin: 'groovy'
+
+// In this section you declare where to find the dependencies of your project
+repositories {
+    // Use 'jcenter' for resolving your dependencies.
+    // You can declare any Maven/Ivy/file repository here.
+    jcenter()
+    maven { url 'https://repo.jenkins-ci.org/releases/' }
+}
+
+configurations {
+    testPlugins {}
+}
+
+// In this section you declare the dependencies for your production and test code
+dependencies {
+    compile 'org.slf4j:slf4j-api:1.7.22'
+    compile 'org.codehaus.groovy:groovy-all:2.4.7'
+    // Jenkis Pipeline JUnit
+    testCompile group:'com.lesfurets', name:'jenkins-pipeline-unit', version:'1.0'
+    testCompile group: 'junit', name: 'junit', version: '4.11'
+
+  compile "org.jenkins-ci.plugins:job-dsl-core:+"
+
+  // Jenkins groovy dsl
+  testCompile 'org.spockframework:spock-core:1.0-groovy-2.4'
+  testCompile 'cglib:cglib-nodep:2.2.2' // used by Spock
+
+  // Jenkins test harness dependencies
+  testCompile 'org.jenkins-ci.main:jenkins-test-harness:2.8'
+  testCompile "org.jenkins-ci.main:jenkins-war:+"
+  //testCompile "org.jenkins-ci.main:jenkins-war:+:war-for-test@jar"
+
+  // Job DSL plugin including plugin dependencies
+  testCompile "org.jenkins-ci.plugins:job-dsl:+"
+  testCompile "org.jenkins-ci.plugins:job-dsl:+@jar"
+  testCompile 'org.jenkins-ci.plugins:structs:1.2@jar'
+  testCompile 'org.jenkins-ci.plugins:cloudbees-folder:5.0@jar'
+
+  // plugins to install in test instance
+  testPlugins 'org.jenkins-ci.plugins:ghprb:1.31.4'
+  testPlugins 'com.coravy.hudson.plugins.github:github:1.19.0'
+  testPlugins 'org.jenkins-ci.plugins:cloudbees-folder:5.0'
+  testPlugins 'org.jenkins-ci.plugins.workflow:workflow-aggregator:+'
+
+  // for the RestApiScriptRunner
+  compile('org.codehaus.groovy.modules.http-builder:http-builder:0.7.2') {
+    exclude(module: 'groovy')
+  }
+
+  // for the RestApiScriptRunner
+  compile('org.apache.ant:ant:1.9.7')
+}
+
+sourceSets {
+    jobs {
+        groovy {
+            srcDirs 'jobs'
+            compileClasspath += main.compileClasspath
+        }
+        compileClasspath += sourceSets.main.output
+        runtimeClasspath += sourceSets.main.output
+    }
+}
+
+task resolveTestDslPlugins(type: Copy) {
+    from configurations.testPlugins
+    into new File(sourceSets.test.output.resourcesDir, 'test-dependencies')
+    include '*.hpi'
+    include '*.jpi'
+    def mapping = [:]
+
+    doFirst {
+        configurations.testPlugins.resolvedConfiguration.resolvedArtifacts.each {
+            mapping[it.file.name] = "${it.name}.${it.extension}"
+        }
+    }
+    rename { mapping[it] }
+
+    doLast {
+        List<String> baseNames = source*.name.collect { mapping[it] }.collect { it[0..it.lastIndexOf('.') - 1] }
+        new File(destinationDir, 'index').setText(baseNames.join('\n'), 'UTF-8')
+    }
+}
+
+test {
+    dependsOn tasks.resolveTestDslPlugins
+    inputs.files sourceSets.jobs.groovy.srcDirs
+
+    // set build directory for Jenkins test harness, JENKINS-26331
+    systemProperty 'buildDirectory', project.buildDir.absolutePath
+}
