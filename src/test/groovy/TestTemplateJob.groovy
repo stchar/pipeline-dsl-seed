@@ -1,10 +1,9 @@
 import org.junit.Before
 import org.junit.Test
+import static org.junit.Assert.assertTrue
 
 import com.lesfurets.jenkins.unit.BasePipelineTest
-
-//import static com.lesfurets.jenkins.unit.MethodCall.callArgsToString
-//import static org.junit.Assert.assertTrue
+import static com.lesfurets.jenkins.unit.MethodCall.callArgsToString
 
 class TestTemplateJob extends BasePipelineTest {
 
@@ -14,7 +13,7 @@ class TestTemplateJob extends BasePipelineTest {
       scriptRoots += 'jobs'
       super.setUp()
       def scmBranch = "feature_test"
-      helper.registerAllowedMethod("sh", [Map.class], {c -> 'bcc19744'})
+      helper.registerAllowedMethod("readFile", [Map.class], {c -> 'bcc19744'})
       binding.setVariable('scm', [
                       $class                           : 'GitSCM',
                       branches                         : [[name: scmBranch]]
@@ -26,4 +25,17 @@ class TestTemplateJob extends BasePipelineTest {
       def script = loadScript("jobs/template/pipeline/template.groovy")
       printCallStack()
   }
+
+  @Test
+  void should_print_property_value() {
+    def script = loadScript('template/pipeline/template.groovy')
+
+    def expectedValue = 'Hello World!'
+    assertTrue(helper.callStack.findAll { call ->
+      call.methodName == 'echo'
+    }.any { call ->
+      callArgsToString(call).contains(expectedValue)
+    })
+  }
+
 }
