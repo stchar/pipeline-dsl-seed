@@ -31,7 +31,7 @@ node('master') {
     writeFile(file:'.seed_ref',text:seed_ref)
 
     // Call seeder script to deploy jobs in the configuration
-    jobDsl(targets: 'seeder.groovy',
+    jobDsl(targets: 'jobs/seeder.groovy',
       unstableOnDeprecation: true,
       failOnMissingPlugin: true)
   }

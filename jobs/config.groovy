@@ -23,9 +23,11 @@ template = [
     'jobs/template/test/template_SUITE.groovy',
   ]
 ]
+
 projects = [seed, template]
 
 test_suites = []
+
 jobs = []
 
 for (prj in projects) {
