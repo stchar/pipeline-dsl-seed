@@ -12,12 +12,6 @@ class TestTemplateJob extends BasePipelineTest {
   void setUp() throws Exception {
       scriptRoots += 'jobs'
       super.setUp()
-      def scmBranch = "feature_test"
-      helper.registerAllowedMethod("readFile", [Map.class], {c -> 'bcc19744'})
-      binding.setVariable('scm', [
-                      $class                           : 'GitSCM',
-                      branches                         : [[name: scmBranch]]
-      ])
   }
 
   @Test

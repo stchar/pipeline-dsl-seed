@@ -39,3 +39,5 @@ for (prj in projects) {
     test_suites.add(test_suite)
   }
 }
+
+return this
