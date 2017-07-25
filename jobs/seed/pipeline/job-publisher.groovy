@@ -1,5 +1,13 @@
 // Sandbox is for validation of MR or manual testting
 flavour = 'sandbox'
+
+try {
+  seed_ref = seed_ref ? seed_ref : 'master'
+} catch (e) {
+  seed_ref = 'master'
+}
+
+
 // Seed url couldbe replaced by you
 def seed_url = "https://github.com/headcrabmeat/pipeline-dsl-seed.git"
 
