@@ -1,5 +1,5 @@
 // Sandbox is for validation of MR or manual testting
-flavour = 'sandbox'
+flavor = 'sandbox'
 
 try {
   seed_ref = seed_ref ? seed_ref : 'master'
@@ -16,7 +16,7 @@ node('master') {
   stage('prebuild') {
     git(url:seed_url, branch: seed_ref)
     if(seed_ref.equals('master')) {
-        flavour = null
+        flavor = null
     }
     git(url:seed_url, branch: seed_ref)
     config = load 'jobs/config.groovy'

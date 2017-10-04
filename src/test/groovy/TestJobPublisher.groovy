@@ -21,7 +21,7 @@ class TestJobPublisher extends BasePipelineTest {
       helper.registerAllowedMethod("writeFile", [Map.class], null)
       helper.registerAllowedMethod("jobDsl", [Map.class], null)
       helper.registerAllowedMethod("build", [Map.class], null)
-      binding.setVariable('flavour',null)
+      binding.setVariable('flavor',null)
       binding.setVariable('seed_ref',"master")
   }
 
@@ -32,11 +32,11 @@ class TestJobPublisher extends BasePipelineTest {
   }
 
   @Test
-  void review_branch_flavour() throws Exception {
+  void review_branch_flavor() throws Exception {
     binding.setVariable('seed_ref',"feature/branch")
     def script = runScript("seed/pipeline/job-publisher.groovy")
     assertEquals("Verify seed_ref","feature/branch",binding.getVariable("seed_ref"))
-    assertEquals("Verify flavour is sandbox","sandbox",binding.getVariable("flavour"))
+    assertEquals("Verify flavor is sandbox","sandbox",binding.getVariable("flavor"))
     //printCallStack()
   }
 

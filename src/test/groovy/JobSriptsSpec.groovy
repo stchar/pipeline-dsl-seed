@@ -98,7 +98,7 @@ class JobScriptsSpec extends Specification {
       def gse = new GroovyScriptEngine(".")
       def bindings = new Binding()
       def config = 'jobs/config.groovy'
-      bindings.setProperty('flavour', null)
+      bindings.setProperty('flavor', null)
       gse.run(config,bindings)
       return bindings.jobs
     }
