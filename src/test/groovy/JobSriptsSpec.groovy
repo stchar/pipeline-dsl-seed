@@ -17,7 +17,8 @@ import spock.lang.Specification
 import spock.lang.Unroll
 
 /**
- * Tests that all dsl scripts in the jobs directory will compile. All config.xml's are written to build/debug-xml.
+ * Tests that all dsl scripts in the jobs directory will compile.
+ * All config.xml's are written to build/debug-xml.
  */
 class JobScriptsSpec extends Specification {
 
@@ -94,11 +95,11 @@ class JobScriptsSpec extends Specification {
     }
 
     static List getJobs() {
-      def sharedData = new Binding()
-      def shell = new GroovyShell(sharedData)
-      def config = new File('jobs/config.groovy')
-      sharedData.setProperty('flavour', null)
-      shell.evaluate(config.text)
-      return sharedData.jobs
+      def gse = new GroovyScriptEngine(".")
+      def bindings = new Binding()
+      def config = 'jobs/config.groovy'
+      bindings.setProperty('flavour', null)
+      gse.run(config,bindings)
+      return bindings.jobs
     }
 }

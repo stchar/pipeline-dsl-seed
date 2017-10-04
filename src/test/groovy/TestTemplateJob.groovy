@@ -16,13 +16,13 @@ class TestTemplateJob extends BasePipelineTest {
 
   @Test
   void should_execute_without_errors() throws Exception {
-      def script = loadScript("jobs/template/pipeline/template.groovy")
+      def script = runScript("jobs/template/pipeline/template.groovy")
       printCallStack()
   }
 
   @Test
   void should_print_property_value() {
-    def script = loadScript('template/pipeline/template.groovy')
+    def script = runScript('template/pipeline/template.groovy')
 
     def expectedValue = 'Hello World!'
     assertTrue(helper.callStack.findAll { call ->
