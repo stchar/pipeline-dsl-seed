@@ -27,14 +27,14 @@ class TestJobPublisher extends BasePipelineTest {
 
   @Test
   void should_execute_without_errors() throws Exception {
-    def script = loadScript("seed/pipeline/job-publisher.groovy")
+    def script = runScript("seed/pipeline/job-publisher.groovy")
     //printCallStack()
   }
 
   @Test
   void review_branch_flavour() throws Exception {
     binding.setVariable('seed_ref',"feature/branch")
-    def script = loadScript("seed/pipeline/job-publisher.groovy")
+    def script = runScript("seed/pipeline/job-publisher.groovy")
     assertEquals("Verify seed_ref","feature/branch",binding.getVariable("seed_ref"))
     assertEquals("Verify flavour is sandbox","sandbox",binding.getVariable("flavour"))
     //printCallStack()
