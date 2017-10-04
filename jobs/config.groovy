@@ -1,5 +1,5 @@
 job_publisher = [
-  name:'job-publisher'+(flavour ? "-${flavour}" : ""),
+  name:'job-publisher'+(flavor ? "-${flavor}" : ""),
   dsl:'jobs/seed/dsl/job-publisher.groovy',
   pipeline:'jobs/seed/pipeline/job-publisher.groovy',
 ]
