@@ -4,8 +4,11 @@ apply plugin: 'groovy'
 repositories {
     // Use 'jcenter' for resolving your dependencies.
     // You can declare any Maven/Ivy/file repository here.
-    jcenter()
+    maven { url 'http://bits.netbeans.org/maven2' }
     maven { url 'https://repo.jenkins-ci.org/releases/' }
+    jcenter()
+    maven { url 'https://mvnrepository.com/artifact/' }
+
 }
 
 configurations {
@@ -15,41 +18,34 @@ configurations {
 // In this section you declare the dependencies for your production and test code
 dependencies {
     compile 'org.slf4j:slf4j-api:1.7.22'
-    compile 'org.codehaus.groovy:groovy-all:2.4.7'
+    compile 'org.codehaus.groovy:groovy-all:2.4.11'
     // Jenkis Pipeline JUnit
     testCompile group:'com.lesfurets', name:'jenkins-pipeline-unit', version:'1.1'
     testCompile group: 'junit', name: 'junit', version: '4.11'
 
-  compile "org.jenkins-ci.plugins:job-dsl-core:+"
+  compile "org.jenkins-ci.plugins:job-dsl-core:1.66"
 
   // Jenkins groovy dsl
   testCompile 'org.spockframework:spock-core:1.0-groovy-2.4'
   testCompile 'cglib:cglib-nodep:2.2.2' // used by Spock
 
   // Jenkins test harness dependencies
-  testCompile 'org.jenkins-ci.main:jenkins-test-harness:+'
-  testCompile "org.jenkins-ci.main:jenkins-war:+"
-  //testCompile "org.jenkins-ci.main:jenkins-war:+:war-for-test@jar"
+  testCompile 'org.jenkins-ci.main:jenkins-test-harness:2.9'
+  testCompile "org.jenkins-ci.main:jenkins-war:2.9"
+  testCompile "org.jenkins-ci.main:jenkins-war:2.9:war-for-test@jar"
 
   // Job DSL plugin including plugin dependencies
-  testCompile "org.jenkins-ci.plugins:job-dsl:+"
-  testCompile "org.jenkins-ci.plugins:job-dsl:+@jar"
-  testCompile 'org.jenkins-ci.plugins:structs:1.2@jar'
-  testCompile 'org.jenkins-ci.plugins:cloudbees-folder:5.0@jar'
+  testCompile "org.jenkins-ci.plugins:job-dsl:1.66"
+  testCompile "org.jenkins-ci.plugins:job-dsl:1.66@jar"
+  testCompile 'org.jenkins-ci.plugins:structs:1.6@jar'
+  testCompile 'org.jenkins-ci.plugins:cloudbees-folder:5.12@jar'
 
   // plugins to install in test instance
   testPlugins 'org.jenkins-ci.plugins:ghprb:1.31.4'
   testPlugins 'com.coravy.hudson.plugins.github:github:1.19.0'
-  testPlugins 'org.jenkins-ci.plugins:cloudbees-folder:5.0'
-  testPlugins 'org.jenkins-ci.plugins.workflow:workflow-aggregator:+'
-
-  // for the RestApiScriptRunner
-  compile('org.codehaus.groovy.modules.http-builder:http-builder:0.7.2') {
-    exclude(module: 'groovy')
-  }
-
-  // for the RestApiScriptRunner
-  compile('org.apache.ant:ant:1.9.7')
+  testPlugins 'org.jenkins-ci.plugins:cloudbees-folder:5.12'
+  testPlugins 'org.jenkins-ci.plugins:credentials:2.1.10'
+  testPlugins 'org.jenkins-ci.plugins.workflow:workflow-aggregator:2.5'
 }
 
 sourceSets {

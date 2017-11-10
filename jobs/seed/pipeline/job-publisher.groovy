@@ -9,7 +9,7 @@ try {
 
 
 // Seed url couldbe replaced by you
-def seed_url = "https://github.com/headcrabmeat/pipeline-dsl-seed.git"
+def seed_url = "https://github.com/stchar/pipeline-dsl-seed.git"
 
 // dumb clone to populate gitlab plugin internals
 node('master') {
