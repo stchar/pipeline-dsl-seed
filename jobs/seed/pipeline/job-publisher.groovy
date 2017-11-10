@@ -36,7 +36,7 @@ node('master') {
       failOnMissingPlugin: true)
   }
 
-  stage('integration-tests') {
+  stage('e2e-tests') {
     for (suite in test_suites) {
       load suite
     }
