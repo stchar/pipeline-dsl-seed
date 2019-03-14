@@ -15,4 +15,6 @@ include 'api'
 include 'services:webservice'
 */
 
-rootProject.name = 'jenkins-dsl'
+rootProject.name = 'seed'
+include '../pipeline-dsl-seed-dep'
+project(":../pipeline-dsl-seed-dep").name = "template"

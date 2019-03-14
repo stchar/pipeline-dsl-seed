@@ -6,3 +6,4 @@ build
 *.swp
 .jobs
 .seed_ref
+.test_suites
