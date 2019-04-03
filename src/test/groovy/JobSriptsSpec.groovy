@@ -95,11 +95,7 @@ class JobScriptsSpec extends Specification {
     }
 
     static List getJobs() {
-      def gse = new GroovyScriptEngine(".")
-      def bindings = new Binding()
-      def config = 'jobs/config.groovy'
-      bindings.setProperty('flavor', null)
-      gse.run(config,bindings)
-      return bindings.jobs
+      def jobs = new File(".jobs").text
+      return Eval.me(jobs)
     }
 }

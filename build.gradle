@@ -86,3 +86,33 @@ test {
     // set build directory for Jenkins test harness, JENKINS-26331
     systemProperty 'buildDirectory', project.buildDir.absolutePath
 }
+ext {
+  jenkins_jobs =[]
+  jenkins_test_suites =[]
+}
+allprojects {
+  task getJobs {
+    doLast { task ->
+      println "I'm $task.project.name"
+      println "I'm in $task.project.projectDir"
+      def tree = fileTree(dir: 'jobs', include: '**/config.groovy')
+      println "fileTree = ${tree.collect{it}}"
+      def gse = new GroovyScriptEngine(".")
+      def bindings = new Binding()
+      // Initialize global variables
+      bindings.setProperty('flavour', null)
+      bindings.setProperty('gradle_project_dir',task.project.projectDir)
+      tree.forEach{
+        def p = gse.run(it.getPath(),bindings)
+        jenkins_jobs.addAll(p.jobs)
+        jenkins_test_suites.addAll(p.test_suites)
+      }
+      println "jenkins_jobs = ${jenkins_jobs}"
+      println "jenkins_test_suites = ${jenkins_test_suites}"
+      file("${project.rootDir}/.jobs").text = jenkins_jobs.inspect()
+      file("${project.rootDir}/.test_suites").text = jenkins_test_suites.inspect()
+
+    }
+  }
+}
+
