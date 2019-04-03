@@ -6,38 +6,37 @@ pipeline jobs right form the jenkins
 ```
 .
 ├── jobs
-│   ├── config.groovy     # contains a configuration of jobs to deploy
 │   │
 │   ├── seeder.groovy     # Groovy script to seed jobs with provided configuration
 │   │
-│   ├── seed                       # A project to test and publish
-│   │   │                          # your Jenkins jobs
-│   │   │
-│   │   ├── dsl
-│   │   │   └── job-publisher.groovy  # default input arguments
-│   │   │                             # configuration to call seeder script
-|   │   │                             # and is used to sand-boxing the projects
-│   │   └── pipeline
-│   │       └── job-publisher.groovy  # Contains pipeline script to read the
-|   │                                 # configuration, and to call seeder script
-│   │
-│   └── template                      # project with examples of scripts
-│       ├── dsl
-│       │   └── template.groovy
-│       └── pipeline
-│           └── template.groovy
+│   └─── seed                       # A project to test and publish
+│       │                           # your Jenkins jobs
+│       │
+│       ├── config.groovy           # Project config file
+│       │                           # (contains list of jobs
+│       │                           # and other settings needed by `seeder.groovy`)
+│       │
+│       ├── dsl
+│       │   └── job-publisher.groovy  # default input arguments
+│       │                             # configuration to call seeder script
+|       │                             # and is used to sand-boxing the projects
+│       └── pipeline
+│           └── job-publisher.groovy  # Contains pipeline script to read the
+|                                     # configuration, and to call seeder script
+│  
 └── src
     └── test
         └── groovy
             ├── JobSriptsSpec.groovy    # Reads the configuration run deployment in a test environment
-            └── TestTemplateJob.groovy  # Example of junit tests written using JenkinsPipelineUnit
-                                        # to test template job
+            └── TestJobPublisher.groovy  # Example of junit tests written using JenkinsPipelineUnit
+                                         # to test job-publisher
 ```
 
 ## Contribution
 
 ###  Testing
 ```
+git clone https://github.com/stchar/pipeline-dsl-seed-dep ../pipeline-dsl-seed-dep
 ./gradlew test
 
 # Runing gradle behind a proxy
