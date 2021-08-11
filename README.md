@@ -40,7 +40,8 @@ git clone https://github.com/stchar/pipeline-dsl-seed-dep ../pipeline-dsl-seed-d
 ./gradlew test
 
 # Runing gradle behind a proxy
-./gradlew -Dhttps.proxyHost=127.0.0.1 -Dhttps.proxyPort=3128 test
+#./gradlew -Dhttps.proxyHost=127.0.0.1 -Dhttps.proxyPort=3128 test
+#./gradlew test
 ```
 
 ## Deployment
