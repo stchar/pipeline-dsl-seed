@@ -14,7 +14,14 @@ include 'shared'
 include 'api'
 include 'services:webservice'
 */
+pluginManagement {
+  plugins {
+    id 'com.mkobit.jenkins.pipelines.shared-library' version "0.10.1"
+    id 'org.jenkins-ci.jpi' version '0.38.0'
+  }
+}
 
 rootProject.name = 'seed'
 include '../pipeline-dsl-seed-dep'
 project(":../pipeline-dsl-seed-dep").name = "template"
+

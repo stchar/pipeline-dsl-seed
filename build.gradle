@@ -1,9 +1,9 @@
 plugins {
-  id "com.mkobit.jenkins.pipelines.shared-library" version "0.10.1"
+  id "com.mkobit.jenkins.pipelines.shared-library"
   id "jacoco"
   id "java"
   id "groovy"
-  id("org.jenkins-ci.jpi") version "0.38.0" apply false
+  id("org.jenkins-ci.jpi") apply false
 }
 
 // In this section you declare where to find the dependencies of your project
