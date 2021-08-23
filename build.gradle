@@ -23,6 +23,29 @@ dependencies {
   integrationTestImplementation("org.spockframework:spock-core:1.2-groovy-2.4")
 }
 
+sharedLibrary {
+  coreVersion = "2.288"
+  testHarnessVersion = "2.72"
+  pipelineTestUnitVersion = "1.9"
+  pluginDependencies {
+    dependency("org.jenkins-ci.plugins","job-dsl","1.77")
+    dependency("org.jenkins-ci.plugins","cloudbees-folder","6.15")
+    dependency("org.jenkins-ci.plugins.workflow", "workflow-aggregator", "2.6")
+  }
+}
+
+test {
+  testLogging {
+    events "PASSED", "FAILED", "SKIPPED"
+  }
+}
+
+integrationTest {
+  testLogging {
+    events "PASSED", "FAILED", "SKIPPED"
+  }
+}
+
 allprojects {
   task getJobs {
     doFirst { task ->
@@ -39,29 +62,6 @@ allprojects {
       }
       file("${project.rootDir}/.jobs").text = jenkins_jobs.inspect()
       file("${project.rootDir}/.test_suites").text = jenkins_test_suites.inspect()
-
-    }
-  }
-  test {
-    testLogging {
-      events "PASSED", "FAILED", "SKIPPED"
-    }
-  }
-
-  integrationTest {
-    testLogging {
-      events "PASSED", "FAILED", "SKIPPED"
-    }
-  }
-
-  sharedLibrary {
-    coreVersion = "2.288"
-    testHarnessVersion = "2.72"
-    pipelineTestUnitVersion = "1.9"
-    pluginDependencies {
-      dependency("org.jenkins-ci.plugins","job-dsl","1.77")
-      dependency("org.jenkins-ci.plugins","cloudbees-folder","6.15")
-      dependency("org.jenkins-ci.plugins.workflow", "workflow-aggregator", "2.6")
     }
   }
 }

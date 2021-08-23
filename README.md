@@ -7,48 +7,36 @@ pipeline jobs right form the jenkins
 .
 ├── jobs
 │   │
-│   ├── seeder.groovy     # Groovy script to seed jobs with provided configuration
-│   │
-│   └─── seed                       # A project to test and publish
-│       │                           # your Jenkins jobs
-│       │
-│       ├── config.groovy           # Project config file
-│       │                           # (contains list of jobs
-│       │                           # and other settings needed by `seeder.groovy`)
-│       │
-│       ├── dsl
-│       │   └── job-publisher.groovy  # default input arguments
-│       │                             # configuration to call seeder script
-|       │                             # and is used to sand-boxing the projects
-│       └── pipeline
-│           └── job-publisher.groovy  # Contains pipeline script to read the
-|                                     # configuration, and to call seeder script
-│  
-└── src
-    └── test
+│   └── seeder.groovy     # Groovy script to seed jobs with provided configuration
+│
+└── test
+    ├── integration
+    │   └── groovy
+    │       └── JobSriptsSpec.groovy   # Reads the configuration run deployment in a test environment
+    └── unit
         └── groovy
-            ├── JobSriptsSpec.groovy    # Reads the configuration run deployment in a test environment
-            └── TestJobPublisher.groovy  # Example of junit tests written using JenkinsPipelineUnit
-                                         # to test job-publisher
+            └── TestJenkinsfile.groovy # Example of junit tests written using JenkinsPipelineUnit
+                                        # to test job-publisher
 ```
 
 ## Contribution
 
 ###  Testing
 ```
+# Download dependency project
 git clone https://github.com/stchar/pipeline-dsl-seed-dep ../pipeline-dsl-seed-dep
-./gradlew test
 
-# Runing gradle behind a proxy
-#./gradlew -Dhttps.proxyHost=127.0.0.1 -Dhttps.proxyPort=3128 test
-#./gradlew test
+# Process config.groovy files to
+# Get list of jobs to deploy
+./gradlew getJobs
+
+# Run tests
+./gradlew check
 ```
 
 ## Deployment
-Wrap `seed/pipeline/job-publisher.groovy` as jenkins pipeline project and run it
+See https://github.com/stchar/pipeline-dsl-seed-dep docs for details
 
-### SandBoxing
-`job-publisher` handle git branch except master as a sandbox one.
 
 #### Additional Links
 * https://github.com/jenkinsci/job-dsl-plugin/wiki/User-Power-Moves#run-a-dsl-script-locally

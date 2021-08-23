@@ -111,7 +111,7 @@ def jobs = null
 try {
   seed_ref = seed_ref ? seed_ref : readFileFromWorkspace('.seed_ref')
 } catch (err) {
-  seed_ref = readFileFromWorkspace('.seed_ref')
+  seed_ref = "master"
 }
 
 try {
