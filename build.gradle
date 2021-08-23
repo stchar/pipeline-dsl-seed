@@ -21,14 +21,7 @@ repositories {
 dependencies {
   testImplementation(group: 'junit', name: 'junit', version: '4.12')
   integrationTestImplementation("org.spockframework:spock-core:1.2-groovy-2.4")
-
-  // // integration tests dependecies
-  // integrationTestCompile  group: 'org.slf4j', name: 'slf4j-nop', version: '1.7.30'
-  // integrationTestCompile  "org.jenkins-ci.plugins:job-dsl:1.77"
-  // integrationTestCompile  "org.jenkins-ci.plugins:job-dsl:1.77@jar"
 }
-
-
 
 allprojects {
   task getJobs {
@@ -50,14 +43,9 @@ allprojects {
     }
   }
   test {
-  // dependsOn tasks.showBuildDir
-  scanForTestClasses
-    //systemProperty 'buildDirectory', files("${project.rootDir}/build")
     testLogging {
       events "PASSED", "FAILED", "SKIPPED"
     }
-    scanForTestClasses = true
-    // classpath +=  files("${project.rootDir}/build/classes")
   }
 
   integrationTest {
@@ -71,10 +59,7 @@ allprojects {
     testHarnessVersion = "2.72"
     pipelineTestUnitVersion = "1.9"
     pluginDependencies {
-      // workflowCpsGlobalLibraryPluginVersion = "2.16"
-      // workflowJobPluginVersion = "2.40"
       dependency("org.jenkins-ci.plugins","job-dsl","1.77")
-      // dependency("org.jenkins-ci.plugins","structs","1.22")
       dependency("org.jenkins-ci.plugins","cloudbees-folder","6.15")
       dependency("org.jenkins-ci.plugins.workflow", "workflow-aggregator", "2.6")
     }
@@ -87,7 +72,7 @@ task resolveIntegrationTestDependencies(type: org.jenkinsci.gradle.plugins.jpi.T
     into file("${javaConvention.sourceSets.integrationTest.output.resourcesDir}/test-dependencies")
   }
 
-  tasks.processIntegrationTestResources.dependsOn resolveIntegrationTestDependencies
+tasks.processIntegrationTestResources.dependsOn resolveIntegrationTestDependencies
 
 ext {
   jenkins_jobs =[]
