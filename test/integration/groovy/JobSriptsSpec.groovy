@@ -1,8 +1,9 @@
-package com.dslexample
-
 import groovy.io.FileType
 import hudson.model.Item
 import hudson.model.View
+import org.jenkinsci.plugins.workflow.libs.GlobalLibraries
+import org.jenkinsci.plugins.workflow.libs.LibraryConfiguration
+import org.jenkinsci.plugins.workflow.libs.LibraryRetriever
 import javaposse.jobdsl.dsl.DslScriptLoader
 import javaposse.jobdsl.dsl.GeneratedItems
 import javaposse.jobdsl.dsl.GeneratedJob
@@ -15,6 +16,7 @@ import org.jvnet.hudson.test.JenkinsRule
 import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Unroll
+import com.mkobit.jenkins.pipelines.codegen.LocalLibraryRetriever
 
 /**
  * Tests that all dsl scripts in the jobs directory will compile.
@@ -24,29 +26,21 @@ class JobScriptsSpec extends Specification {
 
     @Shared
     @ClassRule
-    private JenkinsRule jenkinsRule = new JenkinsRule()
+    public JenkinsRule jenkinsRule = new JenkinsRule()
 
     @Shared
-    private File outputDir = new File('./build/debug-xml')
+    public File outputDir = new File('build/debug-xml')
 
     def setupSpec() {
         outputDir.deleteDir()
     }
 
     @Unroll
-    void 'Test job #job.name'(LinkedHashMap job) {
+    def 'Test job #job.name'(LinkedHashMap job) {
         given:
         JobManagement jm = new JenkinsJobManagement(System.out, [:], new File('.'))
 
         when:
-        def seed_ref = new File('.seed_ref')
-        seed_ref.delete()
-        def jobs = new File('.jobs')
-        jobs.delete()
-        seed_ref << "master"
-        jobs << [job].inspect()
-        println seed_ref.text
-        println jobs.text
         def seeder = new File ('jobs/seeder.groovy')
         GeneratedItems items = new DslScriptLoader(jm).runScript(seeder.text)
         writeItems items
@@ -62,7 +56,7 @@ class JobScriptsSpec extends Specification {
     /**
      * Write the config.xml for each generated job and view to the build dir.
      */
-    void writeItems(GeneratedItems items) {
+    def writeItems(GeneratedItems items) {
         Jenkins jenkins = jenkinsRule.jenkins
 
         items.jobs.each { GeneratedJob generatedJob ->
@@ -83,7 +77,7 @@ class JobScriptsSpec extends Specification {
     /**
      * Write a single XML file, creating any nested dirs.
      */
-    void writeFile(File dir, String name, String xml) {
+    def writeFile(File dir, String name, String xml) {
         List tokens = name.split('/')
         File folderDir = tokens[0..<-1].inject(dir) { File tokenDir, String token ->
             new File(tokenDir, token)
@@ -94,8 +88,9 @@ class JobScriptsSpec extends Specification {
         xmlFile.text = xml
     }
 
-    static List getJobs() {
+    def List getJobs() {
       def jobs = new File(".jobs").text
+      println "jobs = $jobs"
       return Eval.me(jobs)
     }
 }

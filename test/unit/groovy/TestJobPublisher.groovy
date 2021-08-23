@@ -4,12 +4,12 @@ import static com.lesfurets.jenkins.unit.global.lib.LocalSource.localSource
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import com.lesfurets.jenkins.unit.BasePipelineTest
+import com.lesfurets.jenkins.unit.declarative.DeclarativePipelineTest
 
 //import static com.lesfurets.jenkins.unit.MethodCall.callArgsToString
 import static org.junit.Assert.assertEquals
 
-class TestJobPublisher extends BasePipelineTest {
+class TestJobPublisher extends DeclarativePipelineTest {
 
   @Override
   @Before
@@ -17,9 +17,9 @@ class TestJobPublisher extends BasePipelineTest {
       scriptRoots += 'jobs'
       super.setUp()
       binding.setVariable("env",[JOB_NAME:"job-publisher"])
-      helper.registerAllowedMethod("git", [Map.class], null)
-      helper.registerAllowedMethod("writeFile", [Map.class], null)
-      helper.registerAllowedMethod("readFile", [String.class], { name ->
+      helper.registerAllowedMethod("git", [Map])
+      helper.registerAllowedMethod("writeFile", [Map])
+      helper.registerAllowedMethod("readFile", [String], { name ->
         switch(name) {
           case ".jobs":
           //case ".test_suites":
@@ -29,24 +29,22 @@ class TestJobPublisher extends BasePipelineTest {
             return ""
         }
       })
-      helper.registerAllowedMethod("jobDsl", [Map.class], null)
-      helper.registerAllowedMethod("build", [Map.class], null)
+      helper.registerAllowedMethod("jobDsl", [Map], null)
+      helper.registerAllowedMethod("build", [Map], null)
       binding.setVariable('flavor',null)
       binding.setVariable('seed_ref',"master")
   }
 
   @Test
   void should_execute_without_errors() throws Exception {
-    def script = runScript("seed/pipeline/job-publisher.groovy")
+    def script = runScript("Jenkinsfile")
     printCallStack()
   }
 
   @Test
   void review_branch_flavor() throws Exception {
-    binding.setVariable('seed_ref',"feature/branch")
-    def script = runScript("seed/pipeline/job-publisher.groovy")
-    assertEquals("Verify seed_ref","feature/branch",binding.getVariable("seed_ref"))
-    assertEquals("Verify flavor is sandbox","sandbox",binding.getVariable("flavor"))
+    binding.setVariable('params',[seed_ref: "feature/branch"])
+    def script = runScript("Jenkinsfile")
     printCallStack()
   }
 

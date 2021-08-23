@@ -9,8 +9,8 @@ class Seeder {
   *             [
   *                 [//job1
   *                     name:{String}    Name of the generated job
-  *                     pipeline:{ArrayList<String>|String} Path of the -pipeline.goovy script(s)
-  *                     dsl:{ArrayList<String>|String} Path of the -dsl.goovy script(s)
+  *                     pipeline:{ArrayList<String>|String} Path of the -pipeline.groovy script(s)
+  *                     dsl:{ArrayList<String>|String} Path of the -dsl.groovy script(s)
   *                 ],
   *                 [//job2
   *                     name:{String}
@@ -38,12 +38,6 @@ class Seeder {
           //authenticationToken(job.token)
           logRotator(30, 30, 30, 30)
           quietPeriod(10)
-          concurrentBuild(true)
-          parameters{
-              //SCM axilarry scripts
-              //TODO Add descritptions
-              stringParam('seed_ref', seed_ref, 'Version of the jenkins-dsl-seed repository')
-          }
       }
       def pipeline_script = ""
 
@@ -108,6 +102,8 @@ ${script_text}
     } // for job in jobs
   }//static pipeline
 }//class Seeder
+
+// MAIN
 
 def seed_ref = null
 def jobs = null

@@ -1,4 +1,10 @@
-apply plugin: 'groovy'
+plugins {
+  id "com.mkobit.jenkins.pipelines.shared-library" version "0.10.1"
+  id "jacoco"
+  id "java"
+  id "groovy"
+  id("org.jenkins-ci.jpi") version "0.38.0" apply false
+}
 
 // In this section you declare where to find the dependencies of your project
 repositories {
@@ -11,92 +17,23 @@ repositories {
 
 }
 
-configurations {
-    testPlugins {}
-}
-
 // In this section you declare the dependencies for your production and test code
 dependencies {
-    compile 'org.slf4j:slf4j-api:1.7.29'
-    compile 'org.codehaus.groovy:groovy-all:3.0.7'
-    // Jenkis Pipeline JUnit
-    testCompile group:'com.lesfurets', name:'jenkins-pipeline-unit', version:'1.9'
-    testCompile group: 'junit', name: 'junit', version: '4.*'
+  testImplementation(group: 'junit', name: 'junit', version: '4.12')
+  integrationTestImplementation("org.spockframework:spock-core:1.2-groovy-2.4")
 
-  compile "org.jenkins-ci.plugins:job-dsl-core:1.77"
-
-  // Jenkins groovy dsl
-  testCompile 'org.spockframework:spock-core:2.0-M5-groovy-3.0'
-  testCompile 'cglib:cglib-nodep:2.2.2' // used by Spock
-
-  // Jenkins test harness dependencies
-  testCompile 'org.jenkins-ci.main:jenkins-test-harness:2.72'
-  testCompile "org.jenkins-ci.main:jenkins-war:2.288"
-  // testCompile "org.jenkins-ci.main:jenkins-war:*:war-for-test@jar"
-
-  // Job DSL plugin including plugin dependencies
-  testCompile "org.jenkins-ci.plugins:job-dsl:1.77"
-  testCompile "org.jenkins-ci.plugins:job-dsl:1.77@jar"
-  testCompile 'org.jenkins-ci.plugins:structs:1.22@jar'
-  testCompile 'org.jenkins-ci.plugins:cloudbees-folder:6.15@jar'
-
-  // plugins to install in test instance
-  testPlugins 'org.jenkins-ci.plugins:ghprb:1.33.1'
-  testPlugins 'com.coravy.hudson.plugins.github:github:1.*'
-  testPlugins 'org.jenkins-ci.plugins:cloudbees-folder:6.15'
-  testPlugins 'org.jenkins-ci.plugins:credentials:2.3.9'
-  testPlugins 'org.jenkins-ci.plugins.workflow:workflow-aggregator:2.6'
+  // // integration tests dependecies
+  // integrationTestCompile  group: 'org.slf4j', name: 'slf4j-nop', version: '1.7.30'
+  // integrationTestCompile  "org.jenkins-ci.plugins:job-dsl:1.77"
+  // integrationTestCompile  "org.jenkins-ci.plugins:job-dsl:1.77@jar"
 }
 
-sourceSets {
-    jobs {
-        groovy {
-            srcDirs 'jobs'
-            compileClasspath += main.compileClasspath
-        }
-        compileClasspath += sourceSets.main.output
-        runtimeClasspath += sourceSets.main.output
-    }
-}
 
-task resolveTestDslPlugins(type: Copy) {
-    from configurations.testPlugins
-    into new File(sourceSets.test.output.resourcesDir, 'test-dependencies')
-    include '*.hpi'
-    include '*.jpi'
-    def mapping = [:]
 
-    doFirst {
-        configurations.testPlugins.resolvedConfiguration.resolvedArtifacts.each {
-            mapping[it.file.name] = "${it.name}.${it.extension}"
-        }
-    }
-    rename { mapping[it] }
-
-    doLast {
-        List<String> baseNames = source*.name.collect { mapping[it] }.collect { it[0..it.lastIndexOf('.') - 1] }
-        new File(destinationDir, 'index').setText(baseNames.join('\n'), 'UTF-8')
-    }
-}
-
-test {
-    dependsOn tasks.resolveTestDslPlugins
-    inputs.files sourceSets.jobs.groovy.srcDirs
-
-    // set build directory for Jenkins test harness, JENKINS-26331
-    systemProperty 'buildDirectory', project.buildDir.absolutePath
-}
-ext {
-  jenkins_jobs =[]
-  jenkins_test_suites =[]
-}
 allprojects {
   task getJobs {
-    doLast { task ->
-      println "I'm $task.project.name"
-      println "I'm in $task.project.projectDir"
+    doFirst { task ->
       def tree = fileTree(dir: 'jobs', include: '**/config.groovy')
-      println "fileTree = ${tree.collect{it}}"
       def gse = new GroovyScriptEngine(".")
       def bindings = new Binding()
       // Initialize global variables
@@ -107,12 +44,55 @@ allprojects {
         jenkins_jobs.addAll(p.jobs)
         jenkins_test_suites.addAll(p.test_suites)
       }
-      println "jenkins_jobs = ${jenkins_jobs}"
-      println "jenkins_test_suites = ${jenkins_test_suites}"
       file("${project.rootDir}/.jobs").text = jenkins_jobs.inspect()
       file("${project.rootDir}/.test_suites").text = jenkins_test_suites.inspect()
 
     }
   }
+  test {
+  // dependsOn tasks.showBuildDir
+  scanForTestClasses
+    //systemProperty 'buildDirectory', files("${project.rootDir}/build")
+    testLogging {
+      events "PASSED", "FAILED", "SKIPPED"
+    }
+    scanForTestClasses = true
+    // classpath +=  files("${project.rootDir}/build/classes")
+  }
+
+  integrationTest {
+    testLogging {
+      events "PASSED", "FAILED", "SKIPPED"
+    }
+  }
+
+  sharedLibrary {
+    coreVersion = "2.288"
+    testHarnessVersion = "2.72"
+    pipelineTestUnitVersion = "1.9"
+    pluginDependencies {
+      // workflowCpsGlobalLibraryPluginVersion = "2.16"
+      // workflowJobPluginVersion = "2.40"
+      dependency("org.jenkins-ci.plugins","job-dsl","1.77")
+      // dependency("org.jenkins-ci.plugins","structs","1.22")
+      dependency("org.jenkins-ci.plugins","cloudbees-folder","6.15")
+      dependency("org.jenkins-ci.plugins.workflow", "workflow-aggregator", "2.6")
+    }
+  }
 }
+
+task resolveIntegrationTestDependencies(type: org.jenkinsci.gradle.plugins.jpi.TestDependenciesTask) {
+    configuration = configurations.integrationTestRuntimeClasspath
+    def javaConvention = project.convention.getPlugin(JavaPluginConvention)
+    into file("${javaConvention.sourceSets.integrationTest.output.resourcesDir}/test-dependencies")
+  }
+
+  tasks.processIntegrationTestResources.dependsOn resolveIntegrationTestDependencies
+
+ext {
+  jenkins_jobs =[]
+  jenkins_test_suites =[]
+}
+
+
 
