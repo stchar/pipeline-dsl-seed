@@ -115,10 +115,12 @@ try {
 }
 
 try {
-  jobs = jobs ? jobs : readFileFromWorkspace('.jobs')
+  jobs = jobs ? jobs : readFileFromWorkspace('.jobs.json')
 } catch (err) {
-  jobs = readFileFromWorkspace('.jobs')
+  jobs = readFileFromWorkspace('.jobs.json')
 }
 
-//println "Seeder: found jobs = $jobs"
-Seeder.pipeline(this,evaluate(jobs),seed_ref)
+jobs = new groovy.json.JsonSlurper().parseText(jobs)
+println "Seeder: found jobs = $jobs"
+
+Seeder.pipeline(this,jobs,seed_ref)

@@ -1,3 +1,5 @@
+import groovy.json.JsonOutput
+
 plugins {
   id "com.mkobit.jenkins.pipelines.shared-library"
   id "jacoco"
@@ -60,8 +62,8 @@ allprojects {
         jenkins_jobs.addAll(p.jobs)
         jenkins_test_suites.addAll(p.test_suites)
       }
-      file("${project.rootDir}/.jobs").text = jenkins_jobs.inspect()
-      file("${project.rootDir}/.test_suites").text = jenkins_test_suites.inspect()
+      file("${project.rootDir}/.jobs.json").text = JsonOutput.prettyPrint(JsonOutput.toJson(jenkins_jobs))
+      file("${project.rootDir}/.test_suites.json").text = JsonOutput.prettyPrint(JsonOutput.toJson(jenkins_test_suites))
     }
   }
 }
