@@ -44,3 +44,4 @@ See https://github.com/stchar/pipeline-dsl-seed-dep docs for details
 * https://www.cloudbees.com/blog/top-10-best-practices-jenkins-pipeline-plugin
 * https://github.com/sheehan/job-dsl-gradle-example
 * https://github.com/lesfurets/JenkinsPipelineUnit
+* https://github.com/mkobit/jenkins-pipeline-shared-libraries-gradle-plugin

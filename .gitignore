@@ -5,5 +5,7 @@ build
 .gradle
 *.swp
 .jobs
+.jobs.json
 .seed_ref
 .test_suites
+.test_suites.json

@@ -17,6 +17,7 @@ import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Unroll
 import com.mkobit.jenkins.pipelines.codegen.LocalLibraryRetriever
+import groovy.json.JsonSlurper
 
 /**
  * Tests that all dsl scripts in the jobs directory will compile.
@@ -89,8 +90,8 @@ class JobScriptsSpec extends Specification {
     }
 
     def List getJobs() {
-      def jobs = new File(".jobs").text
+      def jobs = new JsonSlurper().parseText(new File(".jobs.json").text)
       println "jobs = $jobs"
-      return Eval.me(jobs)
+      return jobs
     }
 }
