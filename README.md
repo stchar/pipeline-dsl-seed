@@ -10,13 +10,10 @@ pipeline jobs right form the jenkins
 │   └── seeder.groovy     # Groovy script to seed jobs with provided configuration
 │
 └── test
-    ├── integration
-    │   └── groovy
-    │       └── JobSriptsSpec.groovy   # Reads the configuration run deployment in a test environment
-    └── unit
+    └── integration
         └── groovy
-            └── TestJenkinsfile.groovy # Example of junit tests written using JenkinsPipelineUnit
-                                        # to test job-publisher
+            └── JobSriptsSpec.groovy   # Reads the configuration run deployment in a test environment
+                                    # to test job-publisher
 ```
 
 ## Contribution
