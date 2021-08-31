@@ -94,10 +94,10 @@ ${script_text}
         }
       }
 
-      // Auto-approve groovy see https://issues.jenkins-ci.org/browse/JENKINS-31201
-      def scriptApproval = Jenkins.instance
-        .getExtensionList('org.jenkinsci.plugins.scriptsecurity.scripts.ScriptApproval')[0]
-      scriptApproval.approveScript(scriptApproval.hash(pipeline_script, 'groovy'))
+      // // Auto-approve groovy see https://issues.jenkins-ci.org/browse/JENKINS-31201
+      // def scriptApproval = Jenkins.instance
+      //   .getExtensionList('org.jenkinsci.plugins.scriptsecurity.scripts.ScriptApproval')[0]
+      // scriptApproval.approveScript(scriptApproval.hash(pipeline_script, 'groovy'))
 
     } // for job in jobs
   }//static pipeline
