@@ -26,13 +26,15 @@ dependencies {
 }
 
 sharedLibrary {
-  coreVersion = "2.288"
+  coreVersion = "2.289.3"
   testHarnessVersion = "2.72"
   pipelineTestUnitVersion = "1.9"
   pluginDependencies {
     dependency("org.jenkins-ci.plugins","job-dsl","1.77")
     dependency("org.jenkins-ci.plugins","cloudbees-folder","6.15")
     dependency("org.jenkins-ci.plugins.workflow", "workflow-aggregator", "2.6")
+    dependency("org.jenkins-ci.plugins", "credentials", "2.5")
+    dependency("org.jenkins-ci.plugins", "git-server", "1.10")
   }
 }
 

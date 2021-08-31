@@ -39,6 +39,7 @@ class Seeder {
           logRotator(30, 30, 30, 30)
           quietPeriod(10)
       }
+
       def pipeline_script = ""
 
       if (job.gitLabConnection) {
@@ -59,18 +60,18 @@ class Seeder {
         if (job.pipeline instanceof String) {
           job.pipeline=[job.pipeline]
         }
-        println("processing pipeline file(s) = ${job.pipeline}" )
         for (file in job.pipeline) {
-          // read script from file in workspace and comment out
-          // any package or import directive
-          def script_text = dslFactory.readFileFromWorkspace(file)
-              .replaceAll(/^(package\s+.*)/,'// $1')
-              .replaceAll(/(import\s+.*)/,'// $1')
-          pipeline_script = """$pipeline_script
-////// Content of ${file} BEGIN //////
-${script_text}
-////// Content of ${file} END  //////
-"""
+          println("processing pipeline file = " + file)
+          def inputStream = dslFactory.streamFileFromWorkspace(file)
+          String text = new java.io.BufferedReader(
+          new java.io.InputStreamReader(inputStream))
+            .lines()
+            .collect(java.util.stream.Collectors.joining("\n"))
+            .replaceAll(/^(package\s+.*)/,'// $1')
+            .replaceAll(/(import\s+.*)/,'// $1')
+          pipeline_script += "////// Content of ${file} BEGIN //////\n"
+          pipeline_script += text
+          pipeline_script += "\n////// Content of ${file} END //////"
         }
         _dslFactory.with {
           definition {
@@ -80,6 +81,7 @@ ${script_text}
             }
           }
         }
+        pipeline_script = null
       }
 
       if(job.dsl) {
@@ -93,11 +95,6 @@ ${script_text}
           script.pipeline(_dslFactory,seed_ref,job)
         }
       }
-
-      // // Auto-approve groovy see https://issues.jenkins-ci.org/browse/JENKINS-31201
-      // def scriptApproval = Jenkins.instance
-      //   .getExtensionList('org.jenkinsci.plugins.scriptsecurity.scripts.ScriptApproval')[0]
-      // scriptApproval.approveScript(scriptApproval.hash(pipeline_script, 'groovy'))
 
     } // for job in jobs
   }//static pipeline
