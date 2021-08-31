@@ -76,7 +76,7 @@ ${script_text}
           definition {
             cps {
               script(pipeline_script)
-              sandbox(false)
+              sandbox()
             }
           }
         }
