@@ -52,7 +52,7 @@ integrationTest {
 
 allprojects {
   task getJobs {
-    doFirst { task ->
+    doLast { task ->
       def tree = fileTree(dir: 'jobs', include: '**/config.groovy')
       def gse = new GroovyScriptEngine(".")
       def bindings = new Binding()
